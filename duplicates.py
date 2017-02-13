@@ -14,15 +14,26 @@ def scantree(path, depth=5):
 
 def get_duplicates(files):
     files_comb = [item for item in combinations(files, 2)]
-    return [[file1, file2] for file1, file2 in files_comb if cmp(file1, file2, True)]
+    combinations_list = [[file1, file2] for file1, file2 in files_comb if cmp(file1, file2, True)]
+    return combinations_list
+
+
+def has_input_length(argv):
+    if len(argv) > 2:
+        return argv[1], int(argv[2])
+    elif len(argv) > 1:
+        return argv[1], 5
+    else:
+        return '.', 5
 
 
 if __name__ == '__main__':
-    files_from_subfolders = [file.path for file in scantree(argv[1] if len(argv) > 1 else '.', int(argv[2]) if len(argv) > 2 else 5)]
+    path_to_begin, recursion_limitation = has_input_length(argv)
+    files_from_subfolders = [file.path for file in scantree(path_to_begin, recursion_limitation)]
     duplicates_list = get_duplicates(files_from_subfolders)
     if duplicates_list:
         print('\nDuplicates found\n')
-        for file_with_path in duplicates_list[0]:
-            print('{}\n'.format(file_with_path))
+        for file_with_path in duplicates_list:
+            print('{} <---> {}'.format(file_with_path[0], file_with_path[1]))
     else:
         print('No duplicates found.')
