@@ -42,7 +42,7 @@ File «duplicated_files.txt» created.
                      file, else reault will be shown in terminal window
                      (default: scr)
 
-##BEWARE: 
+## BEWARE: 
 Program has recursion depth 2. This was made because of the computer performance. Certainly, you can use any recursion depth, BUT if you have a lot of files to compare program run could take too much time.
 
 # Project Goals
