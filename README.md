@@ -40,7 +40,7 @@ positional arguments:
                  other case script will search for duplicates in current
                  folder and all subfolders and shows the result on console
                  screen
-  file           Specify the full path to folder and filename e.g
+  saving_dist    Specify the full path to folder and filename e.g
                  /home/user/documents/duplicates.txt, else result will be
                  shown in terminal window
 

@@ -26,7 +26,7 @@ class ConsoleArgsParser(argparse.ArgumentParser):
                           script will search for duplicates in current \
                           folder and all subfolders and shows the result on console screen',
                           action='store')
-        self.add_argument('file', nargs='*',
+        self.add_argument('saving_dist', nargs='*',
                           help='Specify the full path to folder and filename\
                               e.g /home/user/documents/duplicates.txt, \
                               else result will be shown in terminal window',

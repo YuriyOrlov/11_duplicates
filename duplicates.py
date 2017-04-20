@@ -16,15 +16,15 @@ def scantree(path, depth):
 def hashfile(path, blocksize=65536):
     if os.path.isfile(path):
         try:
-            file = open(path, 'rb')
+            file_for_hashing = open(path, 'rb')
         except FileNotFoundError:
             return None
         hasher = hashlib.md5()
-        buff = file.read(blocksize)
+        buff = file_for_hashing.read(blocksize)
         while len(buff) > 0:
             hasher.update(buff)
-            buff = file.read(blocksize)
-        file.close()
+            buff = file_for_hashing.read(blocksize)
+        file_for_hashing.close()
         return hasher.hexdigest()
 
 
@@ -56,8 +56,8 @@ def showing_duplicates_in_console(path_to_duplicates_list):
 if __name__ == '__main__':
     args_parser = ConsoleArgsParser()
     args = args_parser.parse_args()
-    path_to_begin, recursion_limitation, form_of_result_representation = args.folder, args.depth, args.file
-    files_from_subfolders = [file.path for file in scantree(path_to_begin, recursion_limitation)]
+    path_to_begin, recursion_limitation, form_of_result_representation = args.folder, args.depth, args.saving_dist
+    files_from_subfolders = [path_to_file.path for path_to_file in scantree(path_to_begin, recursion_limitation)]
     duplicates_list = get_duplicates(files_from_subfolders)
     if duplicates_list and not form_of_result_representation:
         showing_duplicates_in_console(duplicates_list)
