@@ -1,27 +1,56 @@
 import os
 from sys import argv
-import itertools
-from filecmp import cmp
 from args_parser import ConsoleArgsParser
+import hashlib
+import collections
 
 
 def scantree(path, depth):
     for entry in os.scandir(path):
-        if not entry.name.startswith('.') and entry.is_dir(follow_symlinks=False) and depth:
+        if entry.is_dir(follow_symlinks=False) and depth:
             yield from scantree(entry.path, depth - 1)
         else:
             yield entry
 
 
-def get_duplicates(files):
-    files_comb = itertools.combinations(files, 2)
-    return [[file1, file2] for file1, file2 in files_comb if cmp(file1, file2, True)]
+def hashfile(path, blocksize=65536):
+    if os.path.isfile(path):
+        try:
+            file = open(path, 'rb')
+        except FileNotFoundError:
+            return None
+        hasher = hashlib.md5()
+        buff = file.read(blocksize)
+        while len(buff) > 0:
+            hasher.update(buff)
+            buff = file.read(blocksize)
+        file.close()
+        return hasher.hexdigest()
 
 
-def writing_duplicates_into_file(duplicates_list):
+def get_duplicates(file_paths):
+    files_with_same_hashsum = collections.defaultdict(list)
+    hashed_files_list = [(hashfile(path), path) for path in file_paths]
+    [files_with_same_hashsum[hashsum].append(path) for hashsum, path in hashed_files_list if hashsum is not None]
+    results = list(filter(lambda x: len(x) > 1, files_with_same_hashsum.values()))
+    return results
+
+
+def writing_duplicates_into_file(path_to_duplicates_list):
     with open('duplicated_files.txt', 'w') as duplicates:
-        for file_with_path in duplicates_list:
-            duplicates.write('{} <---> {}\n'.format(file_with_path[0], file_with_path[1]))
+        duplicates.write('\nDuplicates found\n\n')
+        for block_of_files in path_to_duplicates_list:
+            for file_with_path in block_of_files:
+                duplicates.write('{}\n'.format(file_with_path))
+            duplicates.write('\n')
+
+
+def showing_duplicates_in_console(path_to_duplicates_list):
+    print('\nDuplicates found\n')
+    for block_of_files in path_to_duplicates_list:
+        for file_with_path in block_of_files:
+            print('{}'.format(file_with_path))
+        print('\n')
 
 
 if __name__ == '__main__':
@@ -31,9 +60,7 @@ if __name__ == '__main__':
     files_from_subfolders = [file.path for file in scantree(path_to_begin, recursion_limitation)]
     duplicates_list = get_duplicates(files_from_subfolders)
     if duplicates_list and (form_of_result_representation == 'scr'):
-        print('\nDuplicates found\n')
-        for file_with_path in duplicates_list:
-            print('{} <---> {}'.format(file_with_path[0], file_with_path[1]))
+        showing_duplicates_in_console(duplicates_list)
     elif duplicates_list and (form_of_result_representation == 'file'):
         writing_duplicates_into_file(duplicates_list)
         print('File «duplicated_files.txt» created.')
