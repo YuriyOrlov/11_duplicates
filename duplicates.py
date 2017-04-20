@@ -36,8 +36,8 @@ def get_duplicates(file_paths):
     return results
 
 
-def writing_duplicates_into_file(path_to_duplicates_list):
-    with open('duplicated_files.txt', 'w') as duplicates:
+def writing_duplicates_into_file(path_to_duplicates_list, filename):
+    with open(filename, 'w') as duplicates:
         duplicates.write('\nDuplicates found\n\n')
         for block_of_files in path_to_duplicates_list:
             for file_with_path in block_of_files:
@@ -56,13 +56,14 @@ def showing_duplicates_in_console(path_to_duplicates_list):
 if __name__ == '__main__':
     args_parser = ConsoleArgsParser()
     args = args_parser.parse_args()
-    path_to_begin, recursion_limitation, form_of_result_representation = args.folder, args.depth, args.result
+    path_to_begin, recursion_limitation, form_of_result_representation = args.folder, args.depth, args.file
     files_from_subfolders = [file.path for file in scantree(path_to_begin, recursion_limitation)]
     duplicates_list = get_duplicates(files_from_subfolders)
-    if duplicates_list and (form_of_result_representation == 'scr'):
+    if duplicates_list and not form_of_result_representation:
         showing_duplicates_in_console(duplicates_list)
-    elif duplicates_list and (form_of_result_representation == 'file'):
-        writing_duplicates_into_file(duplicates_list)
-        print('File «duplicated_files.txt» created.')
+    elif duplicates_list and form_of_result_representation:
+        filename_for_duplicated_files = form_of_result_representation[0].name
+        writing_duplicates_into_file(duplicates_list, filename_for_duplicated_files)
+        print('File «{}» created.'.format(filename_for_duplicated_files))
     else:
         print('No duplicates found.')
