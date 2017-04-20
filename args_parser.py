@@ -20,23 +20,22 @@ class ConsoleArgsParser(argparse.ArgumentParser):
                       ------------------------------------------------------------------
                       This program had been tested on Python 3.5.2.
                       ''')
-        self.add_argument('--folder', nargs='?',
-                          help='Paste full path to folder, in other case \
-                          e.g --folder /home/user/documents/ \
-                          script will search for duplicates in current folder and all subfolders \
-                          (default: %(default)s)',
-                          action='store', default='.')
+        self.add_argument('folder', nargs='?',
+                          help='Paste full path to folder, \
+                          e.g /home/user/documents/,  in other case \
+                          script will search for duplicates in current \
+                          folder and all subfolders and shows the result on console screen',
+                          action='store')
+        self.add_argument('file', nargs='*',
+                          help='Specify the full path to folder and filename\
+                              e.g /home/user/documents/duplicates.txt, \
+                              else result will be shown in terminal window',
+                          type=argparse.FileType('w'), default=None)
         self.add_argument('--depth',
                           help='How deep is recursion must be,\
-                              e.g --depht 3 \
+                              e.g --depth 3 \
                               (default: %(default)s)',
                           type=int, default=2)
-        self.add_argument('--result',
-                          help='Where script present a result: \
-                              for file write --result file,\
-                              else reault will be shown in terminal window\
-                              (default: %(default)s)',
-                          type=str, default='scr')
 
     def error(self, message):
         sys.stderr.write('error: {}\n'.format(message))
